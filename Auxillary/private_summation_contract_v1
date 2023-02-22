@@ -1,0 +1,113 @@
+// SPDX-License-Identifier: GPL-3.0-or-later
+pragma solidity ^0.8.0;
+
+import "../zokrates/verifier.sol";
+
+contract PrivateSummation {
+    mapping(address => uint256) registrationIds;
+    mapping(address => uint256) commitments;
+    mapping(address => string) publicKeys;
+
+    mapping(address => uint256) tempCommitments;
+
+    mapping(address => mapping (address => string)) secretMessages;
+
+    address[] registeredUsers;
+
+    uint256 maximumHypercubeStage = 0;
+    uint256 currentHypercubeStage = 0;
+    uint256 registrationStartTime = 0;
+    uint256 registrationTimeLimit = 0;
+    uint256 numberOfProofsVerified = 0;
+
+    modifier duringRegistrationPeriod() {
+        require(block.timestamp > registrationStartTime && block.timestamp < registrationStartTime + registrationTimeLimit, "Only allowed during registration period!");
+        _;
+    }
+
+    modifier duringHypercubePeriod() {
+        require(currentHypercubeStage < maximumHypercubeStage, "Only allowed during hypercube period!");
+        _;
+    }
+
+    constructor(uint256 _registrationStartTime, uint256 _registrationTimeLimit) {  
+        registrationStartTime = _registrationStartTime;
+        registrationTimeLimit = _registrationTimeLimit;
+    }  
+
+    function register(uint256 commitment, string memory publicKey) public {  // duringRegistrationPeriod
+        require(bytes(publicKeys[msg.sender]).length == 0, "User has already registered!");
+        registrationIds[msg.sender] = registeredUsers.length;
+        commitments[msg.sender] = commitment;
+        publicKeys[msg.sender] = publicKey;
+        registeredUsers.push(msg.sender);
+        calculateMaximumHypercubeStage();
+    }
+
+    function calculateMaximumHypercubeStage() public {
+        uint256 maximumUsersSupported = 2 ** maximumHypercubeStage;
+        if (registeredUsers.length > maximumUsersSupported) {
+            maximumHypercubeStage += 1;
+        }
+    }
+
+    function getHypercubePair() public view returns (uint256) {
+        return registrationIds[msg.sender] ^ (2 ** currentHypercubeStage);
+    }
+
+    function getAddressOfHypercubePair() public view returns (address) {
+        uint256 hypercubePair = getHypercubePair();
+        return registeredUsers[hypercubePair];
+    }
+
+    function getPublicKeyOfHypercubePair() public view returns (string memory) {  
+        address hypercubePairAddress = getAddressOfHypercubePair();
+        return publicKeys[hypercubePairAddress];
+    }  
+
+    function submitSecretSumToPair(string memory secretMessage) public duringHypercubePeriod {  
+        address hypercubePairAddress = getAddressOfHypercubePair();
+        secretMessages[msg.sender][hypercubePairAddress] = secretMessage;
+    }
+
+    function getSecretSumComponentsFromPair() public view returns (string memory, uint256, uint256) { 
+        address hypercubePairAddress = getAddressOfHypercubePair();
+        return (secretMessages[hypercubePairAddress][msg.sender], 
+                maximumHypercubeStage,
+                currentHypercubeStage);
+    }
+
+    function verifyProof(
+        uint[2] memory a, 
+        uint[2][2] memory b, 
+        uint[2] memory c,
+        uint256 newSumCommitment) public duringHypercubePeriod returns (bool) { 
+            address hypercubePairAddress = getAddressOfHypercubePair();
+
+            Verifier verifier = new Verifier();
+            bool isProofCorrect = verifier.verifyTx2(a, b, c, [commitments[msg.sender], commitments[hypercubePairAddress], newSumCommitment, 1]);
+
+            if(isProofCorrect) {
+                numberOfProofsVerified += 1;
+                if (numberOfProofsVerified == registeredUsers.length) {
+                    currentHypercubeStage += 1;
+                    numberOfProofsVerified = 0;
+                }
+
+                if (tempCommitments[hypercubePairAddress] == 0) {
+                    tempCommitments[msg.sender] = newSumCommitment;
+                }
+                else { 
+                    commitments[msg.sender] = newSumCommitment;
+                    commitments[hypercubePairAddress] = tempCommitments[hypercubePairAddress];
+                    tempCommitments[hypercubePairAddress] = 0;
+                } 
+            }
+            
+            return isProofCorrect;
+    }
+
+    function getMyCommitment() public view returns (uint256, uint256, uint256, uint256, uint256) {
+        return (commitments[msg.sender], tempCommitments[msg.sender], currentHypercubeStage, maximumHypercubeStage, numberOfProofsVerified);
+    }
+}
