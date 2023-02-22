@@ -1,0 +1,17 @@
+{
+  "name": "eccrypto",
+  "version": "1.0.0",
+  "description": "",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "eccrypto": "^1.1.6",
+    "eccrypto-js": "^5.4.0",
+    "ecies-geth": "^1.6.9",
+    "zokrates-js": "^1.1.4"
+  }
+}
