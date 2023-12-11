@@ -2,7 +2,7 @@
 
 _Private Value Summation System_
 
-The privacy-preserving data aggregation is a critical problem for many applications where multiple parties need to collaborate with each other privately to arrive at certain results. Blockchain, as a database shared across the network, provides an underlying platform on which such aggregations can be carried out with a decentralized manner. Therefore, in this paper, we have proposed a scalable privacy-preserving data aggregation protocol for summation on the Ethereum blockchain by integrating several cryptographic primitives including commitment scheme, asymmetric encryption and zero-knowledge proof along with the hypercube network topology. The protocol consists of four stages as \textit{contract deployment}, \textit{user registration}, \textit{private submission} and \textit{proof verification}. The analysis of the protocol is made with respect to two main perspectives as security and scalability including computational, communicational and storage overheads. In the paper, the zero-knowledge proof, smart contract and web user interface models for the protocol are provided. We have performed an experimental study in order to identify the required gas costs per individual and per system. The general formulation is provided to characterize the changes in gas costs for the increasing number of users. The zero-knowledge proof generation and verification times are also measured.
+The privacy-preserving data aggregation is a critical problem for many applications where multiple parties need to collaborate with each other privately to arrive at certain results. Blockchain, as a database shared across the network, provides an underlying platform on which such aggregations can be carried out with a decentralized manner. Therefore, in this paper, we have proposed a scalable privacy-preserving data aggregation protocol for summation on the Ethereum blockchain by integrating several cryptographic primitives including commitment scheme, asymmetric encryption and zero-knowledge proof along with the hypercube network topology. The protocol consists of four stages as _contract deployment_, _user registration_, _private submission_ and _proof verification_. The analysis of the protocol is made with respect to two main perspectives as security and scalability including computational, communicational and storage overheads. In the paper, the zero-knowledge proof, smart contract and web user interface models for the protocol are provided. We have performed an experimental study in order to identify the required gas costs per individual and per system. The general formulation is provided to characterize the changes in gas costs for the increasing number of users. The zero-knowledge proof generation and verification times are also measured.
 
 # To Run Protocols
 
@@ -117,7 +117,7 @@ The zero-knowledge proofs are verified on-chain, without requiring any time cost
 
 # Some Maths
 
-Each party must generate two commitments along with a key pair in the \textit{user registration} stage:
+Each party must generate two commitments along with a key pair in the _user registration_ stage:
 
 $$
 \begin{align}
@@ -127,8 +127,7 @@ $$
 \end{align}
 $$
 
-\noindent
-where $c^A$ and $c^B$ are the resulting commitments of the commitment function $Comm$, based on the secret value $x$, the random value $e$ and their salting values $r_{x + e}$ and $r_{e}$ for \textit{Configuration-A} and \textit{Configuration-B}, respectively while $pk$ and $sk$ are the public and secret keys of the key generation function $KeyGen$ based on security parameter $k$.
+where $c^A$ and $c^B$ are the resulting commitments of the commitment function $Comm$, based on the secret value $x$, the random value $e$ and their salting values $r_{x + e}$ and $r_{e}$ for _Configuration-A_ and _Configuration-B_, respectively while $pk$ and $sk$ are the public and secret keys of the key generation function $KeyGen$ based on security parameter $k$.
 
 For every stage of the hypercube networks, the peer parties for a party is determined in the smart contract, based on the principle of $\mid u - u'  \mid = 1 $, as follows: 
 
@@ -139,10 +138,9 @@ $$
 \end{align}
 $$
 
-\noindent
 where $u$ and $u^{peer}$ are the peer parties at a certain stage $t \in [0, log(N)-1]$. Note that the pairs of $u$ as $u^{{peer}^A}$ and $u^{{peer}^B}$ are different parties at the initial hypercube communication stage.
 
-In the \textit{private summation submission} stage, the public keys of the peer parties are fetched to encrypt cumulative summation:
+In the _private summation submission_ stage, the public keys of the peer parties are fetched to encrypt cumulative summation:
 
 $$
 \begin{align}
@@ -151,10 +149,9 @@ $$
 \end{align}
 $$
 
-\noindent
-where $E^A$ and $E^B$ are the resulting encryptions of the encryption function $Enc$ based on the cumulative summations of the party $x^A_{sum}$ and $x^B_{sum}$, the cumulative summations of the pairs of that party $x^{{peer}^A}_{sum}$ and $x^{{peer}^B}_{sum}$, the salting values $r^A$ and $r^B$ and finally the public keys of the pairs $pk^{{peer}^A}$ and $pk^{{peer}^A}$ for \textit{Configuration-A} and \textit{Configuration-B}, respectively.
+where $E^A$ and $E^B$ are the resulting encryptions of the encryption function $Enc$ based on the cumulative summations of the party $x^A_{sum}$ and $x^B_{sum}$, the cumulative summations of the pairs of that party $x^{{peer}^A}_{sum}$ and $x^{{peer}^B}_{sum}$, the salting values $r^A$ and $r^B$ and finally the public keys of the pairs $pk^{{peer}^A}$ and $pk^{{peer}^A}$ for _Configuration-A_ and _Configuration-B_, respectively.
 
-In the \textit{proof verification} stage, two encryptions are fetched from the smart contract for decryption as follows: 
+In the _proof verification_ stage, two encryptions are fetched from the smart contract for decryption as follows: 
 
 $$
 \begin{align}
@@ -163,8 +160,7 @@ $$
 \end{align}
 $$
 
-\noindent
-where $D^A$ and $D^B$ are the resulting decryptions of the decryption function $Dec$ based on the secret key of the party $sk$ for \textit{Configuration-A} and \textit{Configuration-B}, respectively. 
+where $D^A$ and $D^B$ are the resulting decryptions of the decryption function $Dec$ based on the secret key of the party $sk$ for _Configuration-A_ and _Configuration-B_, respectively. 
 
 To prove the correctness of these two off-chain summation operations, two zero-knowledge proofs must be generated as follows: 
 
@@ -179,8 +175,7 @@ $$
 \end{align}
 $$
 
-\noindent
-where $\pi^A$ and $\pi^B$ are the resulting zero-knowledge proofs of the proof generation function $ZkpGen$ based on the current salting values of the party and its pairs as $r^A$, $r^B$, $r^{{peer}^A}$ and $r^{{peer}^B}$; and the new salting values of the party after summation $r^{{new}^A}$ and $r^{{new}^B}$; the current commitments of the party and its pairs as $c^A$, $c^B$, $c^{{peer}^A}$ and $c^{{peer}^B}$; and the new commitments of the party $c^{{new}^A}$ and $c^{{new}^B}$ for \textit{Configuration-A} and \textit{Configuration-B}, respectively.
+where $\pi^A$ and $\pi^B$ are the resulting zero-knowledge proofs of the proof generation function $ZkpGen$ based on the current salting values of the party and its pairs as $r^A$, $r^B$, $r^{{peer}^A}$ and $r^{{peer}^B}$; and the new salting values of the party after summation $r^{{new}^A}$ and $r^{{new}^B}$; the current commitments of the party and its pairs as $c^A$, $c^B$, $c^{{peer}^A}$ and $c^{{peer}^B}$; and the new commitments of the party $c^{{new}^A}$ and $c^{{new}^B}$ for _Configuration-A_ and _Configuration-B_, respectively.
 
 The resulting proofs are later submitted to the smart contract for verification: 
 
@@ -192,8 +187,7 @@ $$
 \end{align}
 $$
 
-\noindent
-where $b^A$ and $b^B$ are the resulting Boolean values as true or false of the proof verification function $ZkpVfy$ based on the proofs $\pi^A$ and $\pi^B$ for \textit{Configuration-A} and \textit{Configuration-B}, respectively. At the end, each party obtains the final result which is $\sum (x) = \sum (x + e) - \sum (e)$.
+where $b^A$ and $b^B$ are the resulting Boolean values as true or false of the proof verification function $ZkpVfy$ based on the proofs $\pi^A$ and $\pi^B$ for _Configuration-A_ and _Configuration-B_, respectively. At the end, each party obtains the final result which is $\sum (x) = \sum (x + e) - \sum (e)$.
 
 # Web User Interface
 
